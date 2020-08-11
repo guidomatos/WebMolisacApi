@@ -115,6 +115,8 @@ Fecha Creación: 11/08/2020
 Notas:
 ***************************************************************
 exec dbo.RegistrarPromocion @Nombre='2 x 1 Arroz'
+exec dbo.RegistrarPromocion @Nombre='Promociones Azúcar'
+select*from Promocion
 ****************************************************************/
 (
 @Nombre varchar(50),
@@ -328,6 +330,246 @@ begin
     FROM Promocion
     WHERE
     PromocionId = @PromocionId
+
+end
+go
+
+
+
+
+create or alter procedure dbo.RegistrarSlider
+/****************************************************************
+Nombre: RegistrarSlider
+Objetivo: Registrar Sliders
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.RegistrarSlider @Nombre='Promoción de Vinos', @Titulo='Descuento 50% en Vinos'
+exec dbo.RegistrarSlider @Nombre='Delivery Miraflores', @Titulo='Llegamos a Miraflores', @Descripcion='Ahora entregamos a Miraflores con nuestros horarios normales'
+select*from Slider
+****************************************************************/
+(
+@Nombre varchar(50),
+@Titulo varchar(50),
+@Descripcion varchar(100) = NULL,
+@Imagen varchar(100) = NULL,
+@UsuarioCreacion varchar(50) = NULL
+)
+as
+begin
+begin try
+
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+    set @Nombre = ISNULL(LTRIM(RTRIM(@Nombre)),'');
+	set @Titulo = ISNULL(LTRIM(RTRIM(@Titulo)),'');
+    set @Descripcion = ISNULL(LTRIM(RTRIM(@Descripcion)),'');
+    set @Imagen = ISNULL(LTRIM(RTRIM(@Imagen)),'');
+    set @UsuarioCreacion = ISNULL(LTRIM(RTRIM(@UsuarioCreacion)),'');
+
+    declare @SliderId int=0;
+
+	-- BEGIN TRANSACTION TRAN_GUARDAR_Slider
+
+		INSERT INTO Slider
+		(
+		Nombre,
+		Titulo,
+        Descripcion,
+        Imagen,
+        UsuarioCreacion,
+        FechaCreacion
+		)
+		VALUES
+		(
+		@Nombre,
+		@Titulo,
+        @Descripcion,
+        @Imagen,
+        @UsuarioCreacion,
+        @FechaActual
+		)
+
+		SET @SliderId = @@IDENTITY;
+		
+    -- COMMIT TRANSACTION TRAN_GUARDAR_Slider
+
+	SELECT @SliderId
+
+end try
+begin catch
+    
+    print 'ERROR_MESSAGE() ' + convert(varchar(max),ERROR_MESSAGE())
+    print 'ERROR_LINE() ' + convert(varchar(max),ERROR_LINE())
+
+    -- if (@@TRANCOUNT > 0) ROLLBACK TRANSACTION TRAN_GUARDAR_Slider
+    SELECT -1
+
+end catch
+end
+go
+
+create or alter procedure dbo.ActualizarSlider
+/****************************************************************
+Nombre: ActualizarSlider
+Objetivo: Actualizar Sliders
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.ActualizarSlider @SliderId = 1, @Nombre='2 x 1 Arroz'
+****************************************************************/
+(
+@SliderId int,
+@Nombre varchar(50),
+@Titulo varchar(50),
+@Descripcion varchar(100) = NULL,
+@Imagen varchar(100) = NULL,
+@UsuarioModificacion varchar(50) = NULL
+)
+as
+begin
+begin try
+
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+    set @Nombre = ISNULL(LTRIM(RTRIM(@Nombre)),'');
+	set @Titulo = ISNULL(LTRIM(RTRIM(@Titulo)),'');
+    set @Descripcion = ISNULL(LTRIM(RTRIM(@Descripcion)),'');
+    set @Imagen = ISNULL(LTRIM(RTRIM(@Imagen)),'');
+    set @UsuarioModificacion = ISNULL(LTRIM(RTRIM(@UsuarioModificacion)),'');
+
+	-- BEGIN TRANSACTION TRAN_ACTUALIZAR_Slider
+
+		UPDATE Slider
+		SET 
+        Nombre = @Nombre,
+		Titulo = @Titulo,
+        Descripcion = @Descripcion,
+        Imagen = @Imagen,
+        UsuarioModificacion = @UsuarioModificacion,
+        FechaModificacion = @FechaActual
+        WHERE
+        SliderId = @SliderId
+
+    -- COMMIT TRANSACTION TRAN_ACTUALIZAR_Slider
+
+	SELECT @SliderId
+
+end try
+begin catch
+    
+    print 'ERROR_MESSAGE() ' + convert(varchar(max),ERROR_MESSAGE())
+    print 'ERROR_LINE() ' + convert(varchar(max),ERROR_LINE())
+
+    -- if (@@TRANCOUNT > 0) ROLLBACK TRANSACTION TRAN_ACTUALIZAR_Slider
+    SELECT -1
+
+end catch
+end
+go
+
+create or alter procedure dbo.EliminarSlider
+/****************************************************************
+Nombre: EliminarSlider
+Objetivo: Eliminar Sliders
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.EliminarSlider @SliderId = 1
+****************************************************************/
+(
+@SliderId int,
+@UsuarioModificacion varchar(50) = NULL
+)
+as
+begin
+begin try
+
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+    set @UsuarioModificacion = ISNULL(LTRIM(RTRIM(@UsuarioModificacion)),'');
+
+	-- BEGIN TRANSACTION TRAN_ELIMINAR_Slider
+
+		UPDATE Slider
+		SET 
+        Activo = 0,
+        UsuarioModificacion = @UsuarioModificacion
+        WHERE
+        SliderId = @SliderId
+
+    -- COMMIT TRANSACTION TRAN_ELIMINAR_Slider
+
+	SELECT @SliderId
+
+end try
+begin catch
+    
+    print 'ERROR_MESSAGE() ' + convert(varchar(max),ERROR_MESSAGE())
+    print 'ERROR_LINE() ' + convert(varchar(max),ERROR_LINE())
+
+    -- if (@@TRANCOUNT > 0) ROLLBACK TRANSACTION TRAN_ELIMINAR_Slider
+    SELECT -1
+
+end catch
+end
+go
+
+create or alter procedure dbo.ObtenerSliders
+/****************************************************************
+Nombre: ObtenerSliders
+Objetivo: Mostrar todas las Sliders activos
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.ObtenerSlideres
+****************************************************************/
+as
+begin
+
+    SELECT
+    SliderId,
+    Nombre,
+	Titulo,
+    Descripcion,
+    Imagen
+    FROM Slider
+    WHERE
+    Activo = 1
+
+end
+go
+
+
+create or alter procedure dbo.ObtenerSlider
+/****************************************************************
+Nombre: ObtenerSlider
+Objetivo: Mostrar datos de un Slider
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.ObtenerSlider @SliderId = 1
+****************************************************************/
+(
+@SliderId int
+)
+as
+begin
+
+    SELECT
+    SliderId,
+    Nombre,
+	Titulo,
+    Descripcion,
+    Imagen
+    FROM Slider
+    WHERE
+    SliderId = @SliderId
 
 end
 go

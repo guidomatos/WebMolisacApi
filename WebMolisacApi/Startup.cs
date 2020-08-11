@@ -36,10 +36,12 @@ namespace WebMolisacApi
             //Repositories
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IPromocionRepository, PromocionRepository>();
+            services.AddScoped<ISliderRepository, SliderRepository>();
 
             //Service
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IPromocionService, PromocionService>();
+            services.AddScoped<ISliderService, SliderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
