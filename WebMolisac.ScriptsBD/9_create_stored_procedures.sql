@@ -104,3 +104,230 @@ begin
 end
 
 go
+
+
+create or alter procedure dbo.RegistrarPromocion
+/****************************************************************
+Nombre: RegistrarPromocion
+Objetivo: Registrar promociones
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.RegistrarPromocion @Nombre='2 x 1 Arroz'
+****************************************************************/
+(
+@Nombre varchar(50),
+@Descripcion varchar(100) = NULL,
+@Imagen varchar(100) = NULL,
+@UsuarioCreacion varchar(50) = NULL
+)
+as
+begin
+begin try
+
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+    set @Nombre = ISNULL(LTRIM(RTRIM(@Nombre)),'');
+    set @Descripcion = ISNULL(LTRIM(RTRIM(@Descripcion)),'');
+    set @Imagen = ISNULL(LTRIM(RTRIM(@Imagen)),'');
+    set @UsuarioCreacion = ISNULL(LTRIM(RTRIM(@UsuarioCreacion)),'');
+
+    declare @PromocionId int=0;
+
+	-- BEGIN TRANSACTION TRAN_GUARDAR_PROMOCION
+
+		INSERT INTO Promocion
+		(
+		Nombre,
+        Descripcion,
+        Imagen,
+        UsuarioCreacion,
+        FechaCreacion
+		)
+		VALUES
+		(
+		@Nombre,
+        @Descripcion,
+        @Imagen,
+        @UsuarioCreacion,
+        @FechaActual
+		)
+
+		SET @PromocionId = @@IDENTITY;
+		
+    -- COMMIT TRANSACTION TRAN_GUARDAR_PROMOCION
+
+	SELECT @PromocionId
+
+end try
+begin catch
+    
+    print 'ERROR_MESSAGE() ' + convert(varchar(max),ERROR_MESSAGE())
+    print 'ERROR_LINE() ' + convert(varchar(max),ERROR_LINE())
+
+    -- if (@@TRANCOUNT > 0) ROLLBACK TRANSACTION TRAN_GUARDAR_PROMOCION
+    SELECT -1
+
+end catch
+end
+go
+
+create or alter procedure dbo.ActualizarPromocion
+/****************************************************************
+Nombre: ActualizarPromocion
+Objetivo: Actualizar promociones
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.ActualizarPromocion @PromocionId = 1, @Nombre='2 x 1 Arroz'
+****************************************************************/
+(
+@PromocionId int,
+@Nombre varchar(50),
+@Descripcion varchar(100) = NULL,
+@Imagen varchar(100) = NULL,
+@UsuarioModificacion varchar(50) = NULL
+)
+as
+begin
+begin try
+
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+    set @Nombre = ISNULL(LTRIM(RTRIM(@Nombre)),'');
+    set @Descripcion = ISNULL(LTRIM(RTRIM(@Descripcion)),'');
+    set @Imagen = ISNULL(LTRIM(RTRIM(@Imagen)),'');
+    set @UsuarioModificacion = ISNULL(LTRIM(RTRIM(@UsuarioModificacion)),'');
+
+	-- BEGIN TRANSACTION TRAN_ACTUALIZAR_PROMOCION
+
+		UPDATE Promocion
+		SET 
+        Nombre = @Nombre,
+        Descripcion = @Descripcion,
+        Imagen = @Imagen,
+        UsuarioModificacion = @UsuarioModificacion,
+        FechaModificacion = @FechaActual
+        WHERE
+        PromocionId = @PromocionId
+
+    -- COMMIT TRANSACTION TRAN_ACTUALIZAR_PROMOCION
+
+	SELECT @PromocionId
+
+end try
+begin catch
+    
+    print 'ERROR_MESSAGE() ' + convert(varchar(max),ERROR_MESSAGE())
+    print 'ERROR_LINE() ' + convert(varchar(max),ERROR_LINE())
+
+    -- if (@@TRANCOUNT > 0) ROLLBACK TRANSACTION TRAN_ACTUALIZAR_PROMOCION
+    SELECT -1
+
+end catch
+end
+go
+
+create or alter procedure dbo.EliminarPromocion
+/****************************************************************
+Nombre: EliminarPromocion
+Objetivo: Eliminar promociones
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.EliminarPromocion @PromocionId = 1
+****************************************************************/
+(
+@PromocionId int,
+@UsuarioModificacion varchar(50) = NULL
+)
+as
+begin
+begin try
+
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+    set @UsuarioModificacion = ISNULL(LTRIM(RTRIM(@UsuarioModificacion)),'');
+
+	-- BEGIN TRANSACTION TRAN_ELIMINAR_PROMOCION
+
+		UPDATE Promocion
+		SET 
+        Activo = 0,
+        UsuarioModificacion = @UsuarioModificacion
+        WHERE
+        PromocionId = @PromocionId
+
+    -- COMMIT TRANSACTION TRAN_ELIMINAR_PROMOCION
+
+	SELECT @PromocionId
+
+end try
+begin catch
+    
+    print 'ERROR_MESSAGE() ' + convert(varchar(max),ERROR_MESSAGE())
+    print 'ERROR_LINE() ' + convert(varchar(max),ERROR_LINE())
+
+    -- if (@@TRANCOUNT > 0) ROLLBACK TRANSACTION TRAN_ELIMINAR_PROMOCION
+    SELECT -1
+
+end catch
+end
+go
+
+create or alter procedure dbo.ObtenerPromociones
+/****************************************************************
+Nombre: ObtenerPromociones
+Objetivo: Mostrar todas las promociones activas
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.ObtenerPromociones
+****************************************************************/
+as
+begin
+
+    SELECT
+    PromocionId,
+    Nombre,
+    Descripcion,
+    Imagen
+    FROM Promocion
+    WHERE
+    Activo = 1
+
+end
+go
+
+
+create or alter procedure dbo.ObtenerPromocion
+/****************************************************************
+Nombre: ObtenerPromocion
+Objetivo: Mostrar datos de una promoción
+Autor: Guido Matos Camones
+Fecha Creación: 11/08/2020
+Notas:
+***************************************************************
+exec dbo.ObtenerPromocion @PromocionId = 1
+****************************************************************/
+(
+@PromocionId int
+)
+as
+begin
+
+    SELECT
+    PromocionId,
+    Nombre,
+    Descripcion,
+    Imagen
+    FROM Promocion
+    WHERE
+    PromocionId = @PromocionId
+
+end
+go
