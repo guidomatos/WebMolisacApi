@@ -4,5 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WebMolisacApi.ApplicationCore\WebMolisacApi.ApplicationCore.csproj" />
+    <ProjectReference Include="..\WebMolisacApi.Infrastructure\WebMolisacApi.Infrastructure.csproj" />
+  </ItemGroup>
+
 
 </Project>

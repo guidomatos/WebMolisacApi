@@ -17,16 +17,16 @@ exec dbo.ValidarLogin 'gmatos', '123456'
 )
 as
 begin
-	--TipoUsuario: 0=No existe,1=Clave Incorrecta,2=Inactivo,3=Activo
+	--TipoResultado: 0=No existe,1=Clave Incorrecta,2=Inactivo,3=Activo
 
 	/*variables de entrada*/
 	declare @ClaveEncriptada varchar(100) = ''
 	set @ClaveEncriptada = (select dbo.fn_EncriptarClave(@Clave))
 
 	/*Variables de salida*/
-	declare @Result int = 0
+	declare @Resultado int = 0
 	declare @Mensaje varchar(50) = ''
-	declare @TipoUsuario int = 0
+	declare @TipoResultado int = 0
 
 	if exists (	select 1 from Usuario where Codigo = @Codigo)
     begin
@@ -39,37 +39,68 @@ begin
         
             if @Activo2 = 1
             begin
-                set @Result = 1
+                set @Resultado = 1
                 set @Mensaje = 'Usuario OK'
-                set @TipoUsuario = 4
+                set @TipoResultado = 4
             end
             else
             begin
-                set @Result = 1
+                set @Resultado = 1
                 set @Mensaje = 'Usuario Inactivo'
-                set @TipoUsuario = 3 
+                set @TipoResultado = 3 
             end
         end
         else
         begin
-            set @Result = 0
+            set @Resultado = 0
             set @Mensaje = 'Clave secreta incorrecta'
-            set @TipoUsuario = 1
+            set @TipoResultado = 1
         end
     end
     else
     begin
-        set @Result = 0
+        set @Resultado = 0
         set @Mensaje = 'El usuario no existe'
-        set @TipoUsuario = 0
+        set @TipoResultado = 0
     end
 
 
 	select 
-    @Result as Result, 
+    @Resultado as Resultado, 
     @Mensaje as Mensaje, 
-    @Codigo as Codigo, 
-    @TipoUsuario as TipoUsuario
+    @Codigo as CodigoUsuario, 
+    @TipoResultado as TipoResultado
 
 end
+go
+
+create or alter procedure dbo.ObtenerDatosSesion
+/****************************************************************
+Nombre: ValidarLogin
+Objetivo: Validar acceso de usuario
+Autor: Guido Matos Camones
+Fecha Creación: 10/08/2020
+Notas:
+***************************************************************
+exec dbo.ObtenerDatosSesion 'gmatos'
+****************************************************************/
+(
+@Codigo varchar(50)
+)
+as
+begin
+	declare @FechaActual datetime = (select dbo.fn_ObtenerFechaActual())
+
+	declare @UsuarioId int = 0;
+	select @UsuarioId = UsuarioId from Usuario where Codigo = @Codigo and Activo = 1
+
+	select
+	u.UsuarioId,
+	u.Codigo, 
+	u.Clave
+	from Usuario u
+	where UsuarioId = @UsuarioId
+
+end
+
 go

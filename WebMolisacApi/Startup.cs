@@ -10,6 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WebMolisacApi.ApplicationCore.Interface.Repositories;
+using WebMolisacApi.ApplicationCore.Interface.Services;
+using WebMolisacApi.ApplicationCore.Services;
+using WebMolisacApi.Infrastructure.Repositories;
 
 namespace WebMolisacApi
 {
@@ -26,6 +30,14 @@ namespace WebMolisacApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton(Configuration);
+
+            //Repositories
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+            //Service
+            services.AddScoped<IUsuarioService, UsuarioService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
