@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebMolisacApi", "WebMolisacApi\WebMolisacApi.csproj", "{035FDD4F-E141-4553-AF44-3D4DEEB077FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebMolisacApi.ApplicationCore", "WebMolisacApi.ApplicationCore\WebMolisacApi.ApplicationCore.csproj", "{194FF696-677B-4E1A-A054-3EE5610E328E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebMolisacApi.Infrastructure", "WebMolisacApi.Infrastructure\WebMolisacApi.Infrastructure.csproj", "{1B0C7726-8E8C-4C6E-BE9A-55E53429C121}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{035FDD4F-E141-4553-AF44-3D4DEEB077FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{035FDD4F-E141-4553-AF44-3D4DEEB077FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{035FDD4F-E141-4553-AF44-3D4DEEB077FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{194FF696-677B-4E1A-A054-3EE5610E328E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{194FF696-677B-4E1A-A054-3EE5610E328E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{194FF696-677B-4E1A-A054-3EE5610E328E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{194FF696-677B-4E1A-A054-3EE5610E328E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B0C7726-8E8C-4C6E-BE9A-55E53429C121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B0C7726-8E8C-4C6E-BE9A-55E53429C121}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B0C7726-8E8C-4C6E-BE9A-55E53429C121}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B0C7726-8E8C-4C6E-BE9A-55E53429C121}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
