@@ -34,6 +34,17 @@ WHERE referenced_object_id = object_id('Slider')
 exec (@sqlForeignKey)
 go
 
+-- declare @sqlForeignKey varchar(max) = ''
+-- SELECT @sqlForeignKey = @sqlForeignKey + ' ' +
+--     'ALTER TABLE [' +  OBJECT_SCHEMA_NAME(parent_object_id) +
+--     '].[' + OBJECT_NAME(parent_object_id) + 
+--     '] DROP CONSTRAINT [' + name + ']'
+-- FROM sys.foreign_keys
+-- WHERE referenced_object_id = object_id('Comprobante')
+
+-- exec (@sqlForeignKey)
+-- go
+
 
 if exists (select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'Usuario' AND TABLE_SCHEMA = 'dbo')
 begin
@@ -52,6 +63,12 @@ begin
     drop table Slider
 end
 go
+
+-- if exists (select 1 from INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'Comprobante' AND TABLE_SCHEMA = 'dbo')
+-- begin
+--     drop table Comprobante
+-- end
+-- go
 
 create table Usuario
 (
@@ -113,3 +130,29 @@ go
 ALTER TABLE Slider
 ADD CONSTRAINT DF_Slider_Activo DEFAULT 1 for Activo
 go
+
+
+-- create table Comprobante
+-- (
+--     ComprobanteId int not null identity(1,1),
+--     RucEmisor varchar(11) NOT NULL,
+--     TipoComprobante char(3) NOT NULL,
+--     NumeroComprobante varchar(20) NOT NULL,
+--     TipoDocumentoReceptor char(3) NOT NULL,
+--     NumeroDocumentoReceptor varchar(20) NOT NULL,
+--     FechaEmision date NOT NULL,
+--     MontoTotal DECIMAL(18,2) NOT NULL,
+--     Activo bit NOT NULL,
+--     UsuarioCreacion varchar(50) NULL,
+--     FechaCreacion datetime NULL,
+--     UsuarioModificacion varchar(50) NULL,
+--     FechaModificacion datetime NULL
+-- )
+
+-- ALTER TABLE Comprobante
+-- ADD CONSTRAINT PK_Comprobante PRIMARY KEY (ComprobanteId)
+-- go
+
+-- ALTER TABLE Comprobante
+-- ADD CONSTRAINT DF_Comprobante_Activo DEFAULT 1 for Activo
+-- go
